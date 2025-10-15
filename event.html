@@ -100,7 +100,7 @@
 
       /* Styles cho Card sự kiện */
       .event-card {
-        background-color: rgba(255, 255, 255, 0.8);
+        /* background-color: rgba(255, 255, 255, 0.8); */ /* Bỏ màu nền cũ */
         backdrop-filter: blur(10px);
         -webkit-backdrop-filter: blur(10px);
         transition: transform 0.3s, box-shadow 0.3s;
@@ -109,6 +109,28 @@
         transform: translateY(-5px);
         box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
       }
+
+      /* START CHANGE: Màu gradient xen kẽ cho các thẻ sự kiện */
+      .event-card:nth-child(odd) {
+        background-image: linear-gradient(to top right, #fef9c3, #fde047);
+      }
+      .event-card:nth-child(odd) h3 {
+        color: #92400e; /* text-amber-800 */
+      }
+      .event-card:nth-child(odd) p {
+        color: #78350f; /* text-amber-900 */
+      }
+
+      .event-card:nth-child(even) {
+        background-image: linear-gradient(to top right, #fed7aa, #fb923c);
+      }
+      .event-card:nth-child(even) h3,
+      .event-card:nth-child(even) p {
+        color: white;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.25);
+      }
+      /* END CHANGE */
+
       .lemon-text {
         color: var(--dark-orange);
       }
@@ -596,9 +618,7 @@
             class="w-48 h-48 object-cover rounded-xl border-4 border-yellow-300 flex-shrink-0"
           />
           <div class="text-center sm:text-left">
-            <h3 class="text-2xl font-bold lobster-font text-yellow-600">
-              Thứ Hai
-            </h3>
+            <h3 class="text-2xl font-bold lobster-font">Thứ Hai</h3>
             <p class="text-gray-700 mt-2">
               Mua 3 bánh Eclair bất kỳ, được tặng ngay 1 bánh Cookie thơm lừng.
             </p>
@@ -613,9 +633,7 @@
             class="w-48 h-48 object-cover rounded-xl border-4 border-yellow-300 flex-shrink-0"
           />
           <div class="text-center sm:text-left">
-            <h3 class="text-2xl font-bold lobster-font text-yellow-600">
-              Thứ Ba
-            </h3>
+            <h3 class="text-2xl font-bold lobster-font">Thứ Ba</h3>
             <p class="text-gray-700 mt-2">
               Thưởng thức bánh Cannoli chuẩn vị Ý với giá ưu đãi chỉ
               12.000đ/cái.
@@ -631,9 +649,7 @@
             class="w-48 h-48 object-cover rounded-xl border-4 border-yellow-300 flex-shrink-0"
           />
           <div class="text-center sm:text-left">
-            <h3 class="text-2xl font-bold lobster-font text-yellow-600">
-              Thứ Tư
-            </h3>
+            <h3 class="text-2xl font-bold lobster-font">Thứ Tư</h3>
             <p class="text-gray-700 mt-2">
               Mua 1 bánh Clafoutis, bạn sẽ được tặng kèm 1 bánh Cookie ngọt
               ngào.
@@ -649,9 +665,7 @@
             class="w-48 h-48 object-cover rounded-xl border-4 border-yellow-300 flex-shrink-0"
           />
           <div class="text-center sm:text-left">
-            <h3 class="text-2xl font-bold lobster-font text-yellow-600">
-              Thứ Năm
-            </h3>
+            <h3 class="text-2xl font-bold lobster-font">Thứ Năm</h3>
             <p class="text-gray-700 mt-2">
               Khi mua 1 bánh Cheesecake, Lemon Patisserie tặng bạn 1 bánh
               Canelé.
@@ -667,9 +681,7 @@
             class="w-48 h-48 object-cover rounded-xl border-4 border-yellow-300 flex-shrink-0"
           />
           <div class="text-center sm:text-left">
-            <h3 class="text-2xl font-bold lobster-font text-yellow-600">
-              Thứ Sáu
-            </h3>
+            <h3 class="text-2xl font-bold lobster-font">Thứ Sáu</h3>
             <p class="text-gray-700 mt-2">
               Ưu đãi cực lớn: Mua 12 bánh Cannoli với giá chỉ 12.000đ.
             </p>
@@ -684,9 +696,7 @@
             class="w-48 h-48 object-cover rounded-xl border-4 border-yellow-300 flex-shrink-0"
           />
           <div class="text-center sm:text-left">
-            <h3 class="text-2xl font-bold lobster-font text-yellow-600">
-              Thứ Bảy
-            </h3>
+            <h3 class="text-2xl font-bold lobster-font">Thứ Bảy</h3>
             <p class="text-gray-700 mt-2">
               Mua một bánh sinh nhật bất kỳ và nhận ngay 3 bánh Cannoli miễn
               phí.
@@ -702,9 +712,7 @@
             class="w-48 h-48 object-cover rounded-xl border-4 border-yellow-300 flex-shrink-0"
           />
           <div class="text-center sm:text-left">
-            <h3 class="text-2xl font-bold lobster-font text-yellow-600">
-              Chủ Nhật
-            </h3>
+            <h3 class="text-2xl font-bold lobster-font">Chủ Nhật</h3>
             <p class="text-gray-700 mt-2">
               Quà tặng đặc biệt cho các bé từ 6 tuổi trở xuống: 1 bánh Cannoli
               hoặc 1 bánh Cookie.
