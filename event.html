@@ -1,0 +1,839 @@
+<!DOCTYPE html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sự Kiện Hàng Tuần | Lemon Patisserie</title>
+    <!-- Tải Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Tải Font Lobster và Montserrat -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;700;900&family=Lobster&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --lemon-yellow: #fde047;
+        --dark-orange: #d97706;
+      }
+      body {
+        font-family: "Montserrat", sans-serif;
+        font-weight: 500;
+        background-color: #fef9e7; /* Màu kem nhạt */
+      }
+      .lobster-font {
+        font-family: "Lobster", cursive;
+      }
+      .cake-title-style {
+        color: var(--dark-orange);
+      }
+
+      /* === START: Đồng bộ hiệu ứng Navbar và Sticky Oven Time từ order.html === */
+      /* START CHANGE: CSS cho khối "Ra lò lúc" nhỏ gọn */
+      .sticky-oven-time {
+        position: fixed;
+        top: 85px;
+        right: 16px;
+        z-index: 25;
+      }
+      .oven-icon-wrapper {
+        background-color: rgba(255, 255, 255, 0.9); /* Nền trắng */
+        backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        padding: 8px;
+        border-radius: 9999px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+      }
+      .oven-details {
+        visibility: hidden;
+        opacity: 0;
+        position: absolute;
+        right: 100%;
+        top: 50%;
+        transform: translateY(-50%) translateX(-10px);
+        background-color: rgba(255, 255, 255, 0.95);
+        padding: 8px 12px;
+        border-radius: 12px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        transition: opacity 0.3s, transform 0.3s;
+        width: max-content;
+      }
+      .sticky-oven-time:hover .oven-details {
+        visibility: visible;
+        opacity: 1;
+        transform: translateY(-50%) translateX(0px);
+      }
+      .oven-icon-wrapper .oven-glow {
+        color: var(--dark-orange); /* Chữ màu cam */
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        animation: oven-text-breathing 1.5s ease-out infinite;
+      }
+      /* END CHANGE */
+
+      @keyframes oven-text-breathing {
+        0%,
+        100% {
+          transform: scale(1);
+        }
+        50% {
+          transform: scale(1.03);
+        }
+      }
+
+      .event-glow {
+        animation: event-breathing 1.5s ease-out infinite;
+      }
+
+      @keyframes event-breathing {
+        0%,
+        100% {
+          filter: drop-shadow(0 0 3px #fff) drop-shadow(0 0 6px #fde047)
+            drop-shadow(0 0 10px #fde047);
+        }
+        50% {
+          filter: drop-shadow(0 0 6px #fff) drop-shadow(0 0 12px #fde047)
+            drop-shadow(0 0 20px #fde047);
+        }
+      }
+      /* === END: Đồng bộ hiệu ứng Navbar === */
+
+      /* Styles cho Card sự kiện */
+      .event-card {
+        background-color: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        transition: transform 0.3s, box-shadow 0.3s;
+      }
+      .event-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+      .lemon-text {
+        color: var(--dark-orange);
+      }
+      /* Sidebar Menu */
+      #sidebar-menu {
+        position: fixed;
+        top: 0;
+        right: 0;
+        width: 300px;
+        max-width: 80%;
+        height: 100%;
+        background-color: #ffffff;
+        box-shadow: -4px 0 10px rgba(0, 0, 0, 0.1);
+        transform: translateX(100%);
+        transition: transform 0.3s ease-in-out;
+        z-index: 60;
+        overflow-y: auto;
+      }
+      #sidebar-menu.active {
+        transform: translateX(0);
+      }
+      #sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 55;
+        display: none;
+      }
+      #sidebar-overlay.active {
+        display: block;
+      }
+
+      /* === START: Đồng bộ hiệu ứng bánh rơi từ order.html === */
+      .bg-animated-item {
+        position: fixed;
+        top: -10%;
+        width: 65px;
+        height: 65px;
+        opacity: 0;
+        animation: fall-in-background linear infinite;
+        z-index: 0;
+        user-select: none;
+        pointer-events: none;
+      }
+
+      @keyframes fall-in-background {
+        0% {
+          transform: translateY(-100%) rotate(0deg);
+          opacity: 0;
+        }
+        10% {
+          opacity: 0.5;
+        }
+        90% {
+          opacity: 0.5;
+        }
+        100% {
+          transform: translateY(110vh) rotate(360deg);
+          opacity: 0;
+        }
+      }
+
+      /* Lớp 1: Bánh nhỏ */
+      .bg-animated-item:nth-child(1) {
+        left: 10%;
+        animation-duration: 12.5s;
+        animation-delay: 0s;
+        width: 65px;
+        height: 65px;
+      }
+      .bg-animated-item:nth-child(2) {
+        left: 30%;
+        animation-duration: 15s;
+        animation-delay: 2.5s;
+        width: 55px;
+        height: 55px;
+      }
+      .bg-animated-item:nth-child(3) {
+        left: 50%;
+        animation-duration: 10s;
+        animation-delay: 5s;
+        width: 70px;
+        height: 70px;
+      }
+      .bg-animated-item:nth-child(4) {
+        left: 70%;
+        animation-duration: 17.5s;
+        animation-delay: 7.5s;
+        width: 60px;
+        height: 60px;
+      }
+      .bg-animated-item:nth-child(5) {
+        left: 90%;
+        animation-duration: 14s;
+        animation-delay: 10s;
+        width: 75px;
+        height: 75px;
+      }
+      .bg-animated-item:nth-child(6) {
+        left: 5%;
+        animation-duration: 16s;
+        animation-delay: 12.5s;
+        width: 62px;
+        height: 62px;
+      }
+      .bg-animated-item:nth-child(7) {
+        left: 85%;
+        animation-duration: 13s;
+        animation-delay: 15s;
+        width: 68px;
+        height: 68px;
+      }
+      .bg-animated-item:nth-child(8) {
+        left: 45%;
+        animation-duration: 19s;
+        animation-delay: 17.5s;
+        width: 58px;
+        height: 58px;
+      }
+      .bg-animated-item:nth-child(9) {
+        left: 20%;
+        animation-duration: 11s;
+        animation-delay: 1s;
+        width: 65px;
+        height: 65px;
+      }
+      .bg-animated-item:nth-child(10) {
+        left: 40%;
+        animation-duration: 15.5s;
+        animation-delay: 3.5s;
+        width: 55px;
+        height: 55px;
+      }
+      .bg-animated-item:nth-child(11) {
+        left: 60%;
+        animation-duration: 12s;
+        animation-delay: 6s;
+        width: 70px;
+        height: 70px;
+      }
+      .bg-animated-item:nth-child(12) {
+        left: 80%;
+        animation-duration: 18s;
+        animation-delay: 8.5s;
+        width: 60px;
+        height: 60px;
+      }
+      .bg-animated-item:nth-child(13) {
+        left: 15%;
+        animation-duration: 14.5s;
+        animation-delay: 11s;
+        width: 75px;
+        height: 75px;
+      }
+      .bg-animated-item:nth-child(14) {
+        left: 25%;
+        animation-duration: 16.5s;
+        animation-delay: 13.5s;
+        width: 62px;
+        height: 62px;
+      }
+      .bg-animated-item:nth-child(15) {
+        left: 55%;
+        animation-duration: 13.5s;
+        animation-delay: 16s;
+        width: 68px;
+        height: 68px;
+      }
+      .bg-animated-item:nth-child(16) {
+        left: 75%;
+        animation-duration: 17s;
+        animation-delay: 18.5s;
+        width: 58px;
+        height: 58px;
+      }
+
+      /* Lớp 2 - Bánh lớn (Tạo hiệu ứng 3D) */
+      .bg-animated-item:nth-child(17) {
+        left: 15%;
+        animation-duration: 13s;
+        animation-delay: 0.5s;
+        width: 130px;
+        height: 130px;
+      }
+      .bg-animated-item:nth-child(18) {
+        left: 35%;
+        animation-duration: 15.5s;
+        animation-delay: 3s;
+        width: 110px;
+        height: 110px;
+      }
+      .bg-animated-item:nth-child(19) {
+        left: 55%;
+        animation-duration: 10.5s;
+        animation-delay: 5.5s;
+        width: 140px;
+        height: 140px;
+      }
+      .bg-animated-item:nth-child(20) {
+        left: 75%;
+        animation-duration: 18s;
+        animation-delay: 8s;
+        width: 120px;
+        height: 120px;
+      }
+      .bg-animated-item:nth-child(21) {
+        left: 95%;
+        animation-duration: 14.5s;
+        animation-delay: 10.5s;
+        width: 150px;
+        height: 150px;
+      }
+      .bg-animated-item:nth-child(22) {
+        left: 2%;
+        animation-duration: 16.5s;
+        animation-delay: 13s;
+        width: 124px;
+        height: 124px;
+      }
+      .bg-animated-item:nth-child(23) {
+        left: 88%;
+        animation-duration: 13.5s;
+        animation-delay: 15.5s;
+        width: 136px;
+        height: 136px;
+      }
+      .bg-animated-item:nth-child(24) {
+        left: 48%;
+        animation-duration: 19.5s;
+        animation-delay: 18s;
+        width: 116px;
+        height: 116px;
+      }
+      .bg-animated-item:nth-child(25) {
+        left: 23%;
+        animation-duration: 11.5s;
+        animation-delay: 1.5s;
+        width: 130px;
+        height: 130px;
+      }
+      .bg-animated-item:nth-child(26) {
+        left: 43%;
+        animation-duration: 16s;
+        animation-delay: 4s;
+        width: 110px;
+        height: 110px;
+      }
+      .bg-animated-item:nth-child(27) {
+        left: 63%;
+        animation-duration: 12.5s;
+        animation-delay: 6.5s;
+        width: 140px;
+        height: 140px;
+      }
+      .bg-animated-item:nth-child(28) {
+        left: 83%;
+        animation-duration: 18.5s;
+        animation-delay: 9s;
+        width: 120px;
+        height: 120px;
+      }
+      .bg-animated-item:nth-child(29) {
+        left: 18%;
+        animation-duration: 15s;
+        animation-delay: 11.5s;
+        width: 150px;
+        height: 150px;
+      }
+      .bg-animated-item:nth-child(30) {
+        left: 28%;
+        animation-duration: 17s;
+        animation-delay: 14s;
+        width: 124px;
+        height: 124px;
+      }
+      .bg-animated-item:nth-child(31) {
+        left: 58%;
+        animation-duration: 14s;
+        animation-delay: 16.5s;
+        width: 136px;
+        height: 136px;
+      }
+      .bg-animated-item:nth-child(32) {
+        left: 78%;
+        animation-duration: 17.5s;
+        animation-delay: 19s;
+        width: 116px;
+        height: 116px;
+      }
+      /* === END: Đồng bộ hiệu ứng bánh rơi === */
+
+      .contact-box {
+        background-color: #fef3c7;
+        border-radius: 0.75rem;
+        box-shadow: 0 4px 6px -1px rgba(217, 119, 6, 0.3),
+          0 2px 4px -2px rgba(217, 119, 6, 0.2);
+        transition: transform 0.2s, box-shadow 0.2s;
+      }
+      .contact-box:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 15px -3px rgba(217, 119, 6, 0.3),
+          0 4px 6px -4px rgba(217, 119, 6, 0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <!-- BACKGROUND ANIMATION (Đồng bộ từ order.html) -->
+    <div id="background-animation-container">
+      <!-- Lớp 1: Bánh nhỏ -->
+      <img
+        class="bg-animated-item"
+        src="images/icon1.png"
+        alt="Bánh ngọt rơi"
+      />
+      <img
+        class="bg-animated-item"
+        src="images/icon2.png"
+        alt="Bánh ngọt rơi"
+      />
+      <img class="bg-animated-item" src="images/3.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/4.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/5.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/6.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/7.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/8.png" alt="Bánh ngọt rơi" />
+      <img
+        class="bg-animated-item"
+        src="images/icon2.png"
+        alt="Bánh ngọt rơi"
+      />
+      <img
+        class="bg-animated-item"
+        src="images/icon1.png"
+        alt="Bánh ngọt rơi"
+      />
+      <img class="bg-animated-item" src="images/3.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/4.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/6.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/5.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/8.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/7.png" alt="Bánh ngọt rơi" />
+      <!-- Lớp 2 - Bánh lớn -->
+      <img
+        class="bg-animated-item"
+        src="images/icon1.png"
+        alt="Bánh ngọt rơi"
+      />
+      <img
+        class="bg-animated-item"
+        src="images/icon2.png"
+        alt="Bánh ngọt rơi"
+      />
+      <img class="bg-animated-item" src="images/3.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/4.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/5.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/6.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/7.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/8.png" alt="Bánh ngọt rơi" />
+      <img
+        class="bg-animated-item"
+        src="images/icon2.png"
+        alt="Bánh ngọt rơi"
+      />
+      <img
+        class="bg-animated-item"
+        src="images/icon1.png"
+        alt="Bánh ngọt rơi"
+      />
+      <img class="bg-animated-item" src="images/3.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/4.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/6.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/5.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/8.png" alt="Bánh ngọt rơi" />
+      <img class="bg-animated-item" src="images/7.png" alt="Bánh ngọt rơi" />
+    </div>
+
+    <!-- HEADER (Đồng bộ từ order.html) -->
+    <header
+      class="sticky top-0 z-30 shadow-md"
+      style="
+        background-image: linear-gradient(to right, #fff085, #fcb454, #ff9b17);
+      "
+    >
+      <div class="max-w-4xl mx-auto p-4 flex justify-between items-center">
+        <!-- Left: Title -->
+        <h1 class="text-3xl font-black text-gray-900 lobster-font">
+          Lemon <span class="lemon-text">Patisserie</span>
+        </h1>
+
+        <div class="hidden md:block"></div>
+
+        <!-- Right: Icons -->
+        <div class="flex items-center space-x-3 sm:space-x-4">
+          <!-- Icon Sự kiện -->
+          <a
+            href="event.html"
+            class="transition transform hover:scale-110"
+            aria-label="Xem sự kiện"
+          >
+            <img src="event.gif" alt="Sự kiện" class="h-10 w-10 event-glow" />
+          </a>
+
+          <!-- Menu Button -->
+          <button
+            id="menu-toggle-btn"
+            class="p-2 rounded-full hover:bg-yellow-300/60 transition"
+            aria-label="Mở menu điều hướng"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-7 w-7 text-gray-800"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- START CHANGE: Thêm khối sticky "Ra lò lúc" -->
+    <div class="sticky-oven-time">
+      <div class="oven-icon-wrapper">
+        <div class="oven-glow">
+          <img src="images/fire.gif" alt="Oven icon" class="h-8 w-8" />
+        </div>
+      </div>
+      <div class="oven-details">
+        <div class="text-sm font-bold lemon-text">
+          <p>Ra lò lúc:</p>
+          <p>10:00 AM & 07:00 PM</p>
+        </div>
+      </div>
+    </div>
+    <!-- END CHANGE -->
+
+    <!-- SIDEBAR MENU -->
+    <div id="sidebar-overlay"></div>
+    <div id="sidebar-menu" class="p-4">
+      <h3 class="text-2xl font-black mb-6 pb-2 border-b-2">Điều Hướng</h3>
+      <ul id="sidebar-category-list" class="space-y-3">
+        <li>
+          <a href="index.html" class="block p-2 rounded hover:bg-gray-100"
+            >Trang Chủ</a
+          >
+        </li>
+        <li>
+          <a href="order.html" class="block p-2 rounded hover:bg-gray-100"
+            >Đặt Bánh</a
+          >
+        </li>
+        <li>
+          <a
+            href="event.html"
+            class="block p-2 rounded bg-yellow-100 font-bold hover:bg-yellow-200"
+            >Sự Kiện Tuần Này</a
+          >
+        </li>
+      </ul>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="max-w-4xl mx-auto p-4 md:p-8 relative z-10">
+      <h2
+        class="text-4xl font-extrabold mb-8 text-center lobster-font cake-title-style"
+      >
+        Sự Kiện Đặc Biệt Hàng Tuần
+      </h2>
+
+      <div class="grid grid-cols-1 gap-8">
+        <!-- Event Cards -->
+        <div
+          class="event-card rounded-xl shadow-lg p-6 flex flex-col sm:flex-row items-center sm:space-x-6 space-y-4 sm:space-y-0"
+        >
+          <img
+            src="images/events/1.png"
+            alt="Eclair"
+            class="w-48 h-48 object-cover rounded-xl border-4 border-yellow-300 flex-shrink-0"
+          />
+          <div class="text-center sm:text-left">
+            <h3 class="text-2xl font-bold lobster-font text-yellow-600">
+              Thứ Hai
+            </h3>
+            <p class="text-gray-700 mt-2">
+              Mua 3 bánh Eclair bất kỳ, được tặng ngay 1 bánh Cookie thơm lừng.
+            </p>
+          </div>
+        </div>
+        <div
+          class="event-card rounded-xl shadow-lg p-6 flex flex-col sm:flex-row items-center sm:space-x-6 space-y-4 sm:space-y-0"
+        >
+          <img
+            src="images/events/2.png"
+            alt="Cannoli"
+            class="w-48 h-48 object-cover rounded-xl border-4 border-yellow-300 flex-shrink-0"
+          />
+          <div class="text-center sm:text-left">
+            <h3 class="text-2xl font-bold lobster-font text-yellow-600">
+              Thứ Ba
+            </h3>
+            <p class="text-gray-700 mt-2">
+              Thưởng thức bánh Cannoli chuẩn vị Ý với giá ưu đãi chỉ
+              12.000đ/cái.
+            </p>
+          </div>
+        </div>
+        <div
+          class="event-card rounded-xl shadow-lg p-6 flex flex-col sm:flex-row items-center sm:space-x-6 space-y-4 sm:space-y-0"
+        >
+          <img
+            src="images/events/3.png"
+            alt="Clafoutis"
+            class="w-48 h-48 object-cover rounded-xl border-4 border-yellow-300 flex-shrink-0"
+          />
+          <div class="text-center sm:text-left">
+            <h3 class="text-2xl font-bold lobster-font text-yellow-600">
+              Thứ Tư
+            </h3>
+            <p class="text-gray-700 mt-2">
+              Mua 1 bánh Clafoutis, bạn sẽ được tặng kèm 1 bánh Cookie ngọt
+              ngào.
+            </p>
+          </div>
+        </div>
+        <div
+          class="event-card rounded-xl shadow-lg p-6 flex flex-col sm:flex-row items-center sm:space-x-6 space-y-4 sm:space-y-0"
+        >
+          <img
+            src="images/events/4.png"
+            alt="Cheesecake"
+            class="w-48 h-48 object-cover rounded-xl border-4 border-yellow-300 flex-shrink-0"
+          />
+          <div class="text-center sm:text-left">
+            <h3 class="text-2xl font-bold lobster-font text-yellow-600">
+              Thứ Năm
+            </h3>
+            <p class="text-gray-700 mt-2">
+              Khi mua 1 bánh Cheesecake, Lemon Patisserie tặng bạn 1 bánh
+              Canelé.
+            </p>
+          </div>
+        </div>
+        <div
+          class="event-card rounded-xl shadow-lg p-6 flex flex-col sm:flex-row items-center sm:space-x-6 space-y-4 sm:space-y-0"
+        >
+          <img
+            src="images/events/5.png"
+            alt="12 Cannoli"
+            class="w-48 h-48 object-cover rounded-xl border-4 border-yellow-300 flex-shrink-0"
+          />
+          <div class="text-center sm:text-left">
+            <h3 class="text-2xl font-bold lobster-font text-yellow-600">
+              Thứ Sáu
+            </h3>
+            <p class="text-gray-700 mt-2">
+              Ưu đãi cực lớn: Mua 12 bánh Cannoli với giá chỉ 12.000đ.
+            </p>
+          </div>
+        </div>
+        <div
+          class="event-card rounded-xl shadow-lg p-6 flex flex-col sm:flex-row items-center sm:space-x-6 space-y-4 sm:space-y-0"
+        >
+          <img
+            src="images/events/6.png"
+            alt="Birthday Cake"
+            class="w-48 h-48 object-cover rounded-xl border-4 border-yellow-300 flex-shrink-0"
+          />
+          <div class="text-center sm:text-left">
+            <h3 class="text-2xl font-bold lobster-font text-yellow-600">
+              Thứ Bảy
+            </h3>
+            <p class="text-gray-700 mt-2">
+              Mua một bánh sinh nhật bất kỳ và nhận ngay 3 bánh Cannoli miễn
+              phí.
+            </p>
+          </div>
+        </div>
+        <div
+          class="event-card rounded-xl shadow-lg p-6 flex flex-col sm:flex-row items-center sm:space-x-6 space-y-4 sm:space-y-0"
+        >
+          <img
+            src="images/events/7.png"
+            alt="Quà cho bé"
+            class="w-48 h-48 object-cover rounded-xl border-4 border-yellow-300 flex-shrink-0"
+          />
+          <div class="text-center sm:text-left">
+            <h3 class="text-2xl font-bold lobster-font text-yellow-600">
+              Chủ Nhật
+            </h3>
+            <p class="text-gray-700 mt-2">
+              Quà tặng đặc biệt cho các bé từ 6 tuổi trở xuống: 1 bánh Cannoli
+              hoặc 1 bánh Cookie.
+            </p>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <!-- FOOTER (Đồng bộ từ order.html) -->
+    <footer
+      class="text-center mt-12 p-8 bg-white/50 border-t-2 border-yellow-200 relative z-10"
+    >
+      <section class="text-center mb-6">
+        <h3 class="text-lg font-bold text-gray-800 mb-4 lobster-font">
+          Kết Nối Với Lemon Patisserie
+        </h3>
+        <div class="flex justify-center space-x-8">
+          <!-- Facebook Icon -->
+          <a
+            href="https://www.facebook.com/lemonpatisserievn?mibextid=LQQJ4d&mibextid=LQQJ4d"
+            target="_blank"
+            class="transition transform hover:scale-125"
+            aria-label="Facebook"
+          >
+            <img
+              src="images/fbicon.webp"
+              alt="Facebook Icon"
+              class="w-10 h-10 object-cover"
+              onerror="this.onerror=null; this.src='https://placehold.co/40x40/3B5998/FFFFFF?text=FB';"
+            />
+          </a>
+          <!-- Instagram Icon -->
+          <a
+            href="https://www.instagram.com/lemonpatisserie.vn/?igsh=MXIyeGxuZmZycnd6aA%3D%3D&utm_source=qr"
+            target="_blank"
+            class="transition transform hover:scale-125"
+            aria-label="Instagram"
+          >
+            <img
+              src="images/Instagram_icon.png"
+              alt="Instagram Icon"
+              class="w-10 h-10 object-cover"
+              onerror="this.onerror=null; this.src='https://placehold.co/40x40/E1306C/FFFFFF?text=IG';"
+            />
+          </a>
+          <!-- TikTok Icon -->
+          <a
+            href="https://www.tiktok.com/@lemonpatisserie.vn?_t=ZS-90WChVLnmF8&_r=1"
+            target="_blank"
+            class="transition transform hover:scale-125"
+            aria-label="TikTok"
+          >
+            <img
+              src="images/tiktokicon.png"
+              alt="TikTok Icon"
+              class="w-10 h-10 object-cover"
+              onerror="this.onerror=null; this.src='https://placehold.co/40x40/000000/FFFFFF?text=TK';"
+            />
+          </a>
+        </div>
+      </section>
+
+      <div class="pt-6 border-t border-gray-100 max-w-lg mx-auto">
+        <p class="text-sm text-gray-500 mb-4">Mọi chi tiết xin liên hệ:</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left">
+          <div class="flex items-center p-3 contact-box">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-8 w-8 text-yellow-500 mr-3 flex-shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
+              />
+            </svg>
+            <div>
+              <p class="font-semibold text-gray-700">Hotline</p>
+              <p class="text-md font-bold lemon-text">032 551 6166</p>
+            </div>
+          </div>
+          <div class="flex items-center p-3 contact-box">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              class="h-8 w-8 text-yellow-500 mr-3 flex-shrink-0"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
+              />
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
+              />
+            </svg>
+            <div>
+              <p class="font-semibold text-gray-700">Địa chỉ</p>
+              <p class="text-md font-bold lemon-text">
+                116k9 Nguyễn Hiền, Bạch Mai, Hà Nội
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      const sidebarMenu = document.getElementById("sidebar-menu");
+      const sidebarOverlay = document.getElementById("sidebar-overlay");
+      const menuToggleBtn = document.getElementById("menu-toggle-btn");
+
+      function toggleSidebar() {
+        sidebarMenu.classList.toggle("active");
+        sidebarOverlay.classList.toggle("active");
+      }
+
+      menuToggleBtn.addEventListener("click", toggleSidebar);
+      sidebarOverlay.addEventListener("click", toggleSidebar);
+    </script>
+  </body>
+</html>
